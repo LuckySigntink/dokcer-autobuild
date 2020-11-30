@@ -1,8 +1,1 @@
-FROM python:3.6
-WORKDIR /app
-COPY . /app
-RUN pip install --trusted-host pypi.python.org -r reqruitments.txt
-RUN apt-get update && apt-get install supervisor -y
-COPY ./f_supervisord.conf /etc/supervisor/supervisord.conf
-COPY ./f_config.conf /etc/supervisor/conf.d/config.conf
-ENTRYPOINT ["supervisord", "-c", "/etc/supervisor/supervisord.conf", "-n"]
+FROM hello-world
