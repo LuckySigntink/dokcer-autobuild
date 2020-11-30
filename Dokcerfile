@@ -1,18 +1,8 @@
-FROM 192.168.247.22/development/jenkins:lts
-USER root
-RUN apt-get update && \
-apt-get -y install apt-transport-https \
-    ca-certificates \
-    curl \
-    gnupg2 \
-    software-properties-common && \
-curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gpg > /tmp/dkey; apt-key add /tmp/dkey && \
-add-apt-repository \
-    "deb [arch=amd64] https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") \
-    $(lsb_release -cs) \
-    stable" && \
-apt-get update && \
-apt-get -y install docker-ce
-RUN apt-get install -y docker-ce
-RUN usermod -a -G docker jenkins
-USER jenkins
+FROM python:3.6
+WORKDIR /app
+COPY . /app
+RUN pip install --trusted-host pypi.python.org -r reqruitments.txt
+RUN apt-get update && apt-get install supervisor -y
+COPY ./f_supervisord.conf /etc/supervisor/supervisord.conf
+COPY ./f_config.conf /etc/supervisor/conf.d/config.conf
+ENTRYPOINT ["supervisord", "-c", "/etc/supervisor/supervisord.conf", "-n"]
